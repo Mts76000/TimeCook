@@ -25,7 +25,6 @@ Copiez `.env.example` en `.env` et remplissez:
 PORT=4000
 MONGODB_URI=...
 JWT_SECRET=...
-CORS_ORIGINS=http://localhost:5173,https://votre-front.netlify.app
 ```
 
 ## Lancer en local

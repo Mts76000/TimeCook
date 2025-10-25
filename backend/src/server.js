@@ -4,25 +4,11 @@ const cors = require("cors");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
 
-const { mongoUri, port, corsOrigins } = require("./config");
+const { mongoUri, port } = require("./config");
 
 const app = express();
 
-// Build CORS options: support '*' wildcard and explicit origins
-const corsOptions = {
-  origin: (origin, callback) => {
-    // Allow non-browser or same-origin requests without origin
-    if (!origin) return callback(null, true);
-    if (Array.isArray(corsOrigins)) {
-      if (corsOrigins.includes("*") || corsOrigins.includes(origin))
-        return callback(null, true);
-    }
-    return callback(new Error("Not allowed by CORS"));
-  },
-  credentials: true,
-};
-
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
 
