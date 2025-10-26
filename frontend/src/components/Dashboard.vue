@@ -12,16 +12,16 @@
       </div>
     </header>
 
-  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-6 flex flex-col lg:flex-row gap-6">
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
       <!-- Add Entry Section -->
       <section class="bg-white shadow-lg rounded-xl p-6 border border-gray-200">
         <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
           <span>➕</span> Ajouter une entrée
         </h2>
-        <form @submit.prevent="addEntry" class="flex flex-col gap-5">
+        <form @submit.prevent="addEntry" class="space-y-4">
           <div>
             <label class="block text-sm font-medium mb-2">Date</label>
-            <input v-model="form.date" type="date" class="w-full min-w-0 max-w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-800" required />
+            <input v-model="form.date" type="date" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-800" required />
           </div>
 
           <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
@@ -32,14 +32,27 @@
           </div>
 
           <template v-if="form.isSchoolDay">
-            <div>
-              <label class="block text-sm font-medium mb-2">Heures de cours (optionnel, défaut 7h)</label>
-              <input v-model.number="form.schoolHours" type="number" step="0.5" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-800" placeholder="7" />
+            <div class="flex flex-col gap-3">
+              <div>
+                <label class="block text-sm font-medium mb-2">Début des cours</label>
+                <input v-model="form.schoolStart" type="time" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-800" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-2">Fin des cours</label>
+                <input v-model="form.schoolEnd" type="time" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-800" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-2">Pause (minutes)</label>
+                <input v-model.number="form.schoolPause" type="number" min="0" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-800" placeholder="ex: 45" />
+              </div>
+              <div v-if="schoolDuration !== null" class="text-xs text-gray-700 mt-1">
+                Durée nette calculée : <span class="font-bold">{{ formatMinutes(schoolDuration) }}</span>
+              </div>
             </div>
           </template>
 
           <template v-else>
-            <div class="flex flex-col sm:flex-row gap-4">
+            <div class="flex flex-col sm:grid sm:grid-cols-2 gap-4">
               <div class="min-w-0">
                 <label class="block text-sm font-medium mb-2">Service</label>
                 <select v-model="form.service" class="w-full min-w-0 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-800">
@@ -50,12 +63,12 @@
               </div>
               <div class="min-w-0">
                 <label class="block text-sm font-medium mb-2">Début</label>
-                <input v-model="form.startTime" type="time" class="w-full min-w-0 max-w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-800" required />
+                <input v-model="form.startTime" type="time" class="w-full min-w-0 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-800" required />
               </div>
             </div>
             <div>
               <label class="block text-sm font-medium mb-2">Fin</label>
-              <input v-model="form.endTime" type="time" class="w-full min-w-0 max-w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-800" required />
+              <input v-model="form.endTime" type="time" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-800" required />
             </div>
             <div>
               <label class="block text-sm font-medium mb-2">Pause (minutes)</label>
@@ -85,13 +98,13 @@
               <option value="week">Semaine</option>
               <option value="month">Mois</option>
             </select>
-            <input v-model="start" type="date" class="border border-gray-300 w-full min-w-0 max-w-full rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-800" @change="refreshSummary" />
+            <input v-model="start" type="date" class="border border-gray-300 w-full rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-800" @change="refreshSummary" />
           </div>
         </div>
 
         <div v-if="summary" class="space-y-4">
           <div class="bg-linear-to-r from-gray-100 to-gray-50 p-4 rounded-lg border border-gray-200">
-            <div class="flex flex-col sm:flex-row gap-4 text-sm">
+            <div class="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <p class="text-gray-600">Total heures</p>
                 <p class="text-2xl font-bold text-gray-900">{{ formatMinutes(summary.totalMinutes) }}</p>
@@ -180,7 +193,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { api } from '../api';
 import dayjs from 'dayjs';
 import isoWeek from 'dayjs/plugin/isoWeek';
@@ -195,8 +208,19 @@ const form = ref({
   startTime: '', 
   endTime: '', 
   isSchoolDay: false, 
-  schoolHours: null,
+  schoolStart: '',
+  schoolEnd: '',
+  schoolPause: 60,
   breakMinutes: null,
+});
+const schoolDuration = computed(() => {
+  if (!form.value.isSchoolDay) return null;
+  if (!form.value.schoolStart || !form.value.schoolEnd) return null;
+  const [h1, m1] = form.value.schoolStart.split(':').map(Number);
+  const [h2, m2] = form.value.schoolEnd.split(':').map(Number);
+  let mins = (h2 * 60 + m2) - (h1 * 60 + m1) - (form.value.schoolPause || 0);
+  if (mins < 0) mins += 24 * 60;
+  return mins;
 });
 const err = ref('');
 const ok = ref(false);
@@ -255,16 +279,33 @@ async function addEntry() {
     const payload = { ...form.value };
     if (payload.isSchoolDay) {
       delete payload.service; delete payload.startTime; delete payload.endTime;
-      if (!payload.schoolHours) delete payload.schoolHours;
+      // Calculer schoolHours à partir des inputs
+      if (form.value.schoolStart && form.value.schoolEnd) {
+        const [h1, m1] = form.value.schoolStart.split(':').map(Number);
+        const [h2, m2] = form.value.schoolEnd.split(':').map(Number);
+        let mins = (h2 * 60 + m2) - (h1 * 60 + m1) - (form.value.schoolPause || 0);
+        if (mins < 0) mins += 24 * 60;
+        payload.schoolHours = +(mins / 60).toFixed(2);
+      } else {
+        payload.schoolHours = null;
+      }
+      delete payload.schoolStart;
+      delete payload.schoolEnd;
+      delete payload.schoolPause;
     } else {
       delete payload.schoolHours;
+      delete payload.schoolStart;
+      delete payload.schoolEnd;
+      delete payload.schoolPause;
       if (payload.breakMinutes === null || payload.breakMinutes === undefined || payload.breakMinutes === '') {
         payload.breakMinutes = defaultBreak.value;
       }
     }
     await api.post('/entries', payload);
     ok.value = true;
-    form.value.schoolHours = null;
+    form.value.schoolStart = '';
+    form.value.schoolEnd = '';
+    form.value.schoolPause = 0;
     await refreshSummary();
     setTimeout(() => { ok.value = false; }, 2000);
   } catch (e) {
