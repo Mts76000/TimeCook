@@ -39,18 +39,18 @@
           </template>
 
           <template v-else>
-            <div class="grid grid-cols-2 gap-4">
-              <div>
+            <div class="flex flex-col sm:grid sm:grid-cols-2 gap-4">
+              <div class="min-w-0">
                 <label class="block text-sm font-medium mb-2">Service</label>
-                <select v-model="form.service" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-800">
+                <select v-model="form.service" class="w-full min-w-0 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-800">
                   <option value="morning">🌅 Matin</option>
                   <option value="evening">🌙 Soir</option>
                   <option value="full">📅 Autre</option>
                 </select>
               </div>
-              <div>
+              <div class="min-w-0">
                 <label class="block text-sm font-medium mb-2">Début</label>
-                <input v-model="form.startTime" type="time" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-800" required />
+                <input v-model="form.startTime" type="time" class="w-full min-w-0 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-800" required />
               </div>
             </div>
             <div>
@@ -183,6 +183,8 @@
 import { ref, onMounted } from 'vue';
 import { api } from '../api';
 import dayjs from 'dayjs';
+import isoWeek from 'dayjs/plugin/isoWeek';
+dayjs.extend(isoWeek);
 
 const props = defineProps({ user: Object });
 const emit = defineEmits(['logout']);
@@ -271,7 +273,12 @@ async function addEntry() {
 }
 
 async function refreshSummary() {
-  const { data } = await api.get('/entries/summary', { params: { range: range.value, start: start.value } });
+  let weekStart = start.value;
+  if (range.value === 'week') {
+    // Forcer le début de semaine au lundi
+    weekStart = dayjs(start.value).isoWeekday(1).format('YYYY-MM-DD');
+  }
+  const { data } = await api.get('/entries/summary', { params: { range: range.value, start: weekStart } });
   summary.value = data;
   // Also load full entries for deletion
   const { data: allEntries } = await api.get('/entries', { params: { start: data.start, end: data.end } });
