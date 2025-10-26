@@ -12,13 +12,13 @@
       </div>
     </header>
 
-  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-6 flex flex-col lg:flex-row gap-6">
       <!-- Add Entry Section -->
       <section class="bg-white shadow-lg rounded-xl p-6 border border-gray-200">
         <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
           <span>➕</span> Ajouter une entrée
         </h2>
-        <form @submit.prevent="addEntry" class="space-y-4">
+        <form @submit.prevent="addEntry" class="flex flex-col gap-5">
           <div>
             <label class="block text-sm font-medium mb-2">Date</label>
             <input v-model="form.date" type="date" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-800" required />
@@ -39,7 +39,7 @@
           </template>
 
           <template v-else>
-            <div class="flex flex-col sm:grid sm:grid-cols-2 gap-4">
+            <div class="flex flex-col sm:flex-row gap-4">
               <div class="min-w-0">
                 <label class="block text-sm font-medium mb-2">Service</label>
                 <select v-model="form.service" class="w-full min-w-0 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-800">
@@ -91,7 +91,7 @@
 
         <div v-if="summary" class="space-y-4">
           <div class="bg-linear-to-r from-gray-100 to-gray-50 p-4 rounded-lg border border-gray-200">
-            <div class="grid grid-cols-2 gap-4 text-sm">
+            <div class="flex flex-col sm:flex-row gap-4 text-sm">
               <div>
                 <p class="text-gray-600">Total heures</p>
                 <p class="text-2xl font-bold text-gray-900">{{ formatMinutes(summary.totalMinutes) }}</p>
