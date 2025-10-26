@@ -21,7 +21,7 @@
         <form @submit.prevent="addEntry" class="flex flex-col gap-5">
           <div>
             <label class="block text-sm font-medium mb-2">Date</label>
-            <input v-model="form.date" type="date" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-800" required />
+            <input v-model="form.date" type="date" class="w-full min-w-0 max-w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-800" required />
           </div>
 
           <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
@@ -50,12 +50,12 @@
               </div>
               <div class="min-w-0">
                 <label class="block text-sm font-medium mb-2">Début</label>
-                <input v-model="form.startTime" type="time" class="w-full min-w-0 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-800" required />
+                <input v-model="form.startTime" type="time" class="w-full min-w-0 max-w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-800" required />
               </div>
             </div>
             <div>
               <label class="block text-sm font-medium mb-2">Fin</label>
-              <input v-model="form.endTime" type="time" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-800" required />
+              <input v-model="form.endTime" type="time" class="w-full min-w-0 max-w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-800" required />
             </div>
             <div>
               <label class="block text-sm font-medium mb-2">Pause (minutes)</label>
@@ -85,7 +85,7 @@
               <option value="week">Semaine</option>
               <option value="month">Mois</option>
             </select>
-            <input v-model="start" type="date" class="border border-gray-300 w-full rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-800" @change="refreshSummary" />
+            <input v-model="start" type="date" class="border border-gray-300 w-full min-w-0 max-w-full rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-800" @change="refreshSummary" />
           </div>
         </div>
 
