@@ -3,8 +3,12 @@ import axios from "axios";
 const envUrl = import.meta.env.VITE_API_URL || "http://localhost:4000";
 // Éviter le Mixed Content: si la page est en HTTPS, forcer l'API en HTTPS
 let baseURL = envUrl;
-if (typeof window !== 'undefined' && window.location.protocol === 'https:' && envUrl.startsWith('http://')) {
-  baseURL = envUrl.replace('http://', 'https://');
+if (
+  typeof window !== "undefined" &&
+  window.location.protocol === "https:" &&
+  envUrl.startsWith("http://")
+) {
+  baseURL = envUrl.replace("http://", "https://");
 }
 
 export const api = axios.create({ baseURL });

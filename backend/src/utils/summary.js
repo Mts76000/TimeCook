@@ -79,8 +79,8 @@ function summarize(entries, options = {}) {
   // Calculate target hours based on range
   let targetHours = weeklyTargetHours;
   if (range === "month") {
-    // User requested a simple monthly target: 35h * 4 (based on weekly target)
-    targetHours = weeklyTargetHours * 4;
+    // Monthly target: exactly 152h (35h * 4.343 ≈ 152)
+    targetHours = 152;
   }
 
   const overtimeHours = Math.max(0, totalHours - targetHours);
