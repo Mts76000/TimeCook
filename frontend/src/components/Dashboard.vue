@@ -18,6 +18,20 @@
         <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
           <span>➕</span> Ajouter une entrée
         </h2>
+        
+        <!-- Copy buttons -->
+        <div v-if="!form.isSchoolDay" class="flex gap-2 mb-4">
+          <button type="button" @click="copyLastService('morning')" class="flex-1 text-xs px-3 py-2 bg-orange-50 hover:bg-orange-100 text-orange-700 rounded-lg transition border border-orange-200">
+            🌅 Copier dernier matin
+          </button>
+          <button type="button" @click="copyLastService('evening')" class="flex-1 text-xs px-3 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg transition border border-indigo-200">
+            🌙 Copier dernier soir
+          </button>
+        </div>
+        <p v-if="prefillMessage" class="text-xs text-green-700 mb-3 bg-green-50 p-2 rounded">
+          ✓ {{ prefillMessage }}
+        </p>
+        
         <form @submit.prevent="addEntry" class="space-y-4">
           <div>
             <label class="block text-sm font-medium mb-2">Date</label>
@@ -89,16 +103,31 @@
 
       <!-- Summary Section -->
       <section class="bg-white shadow-lg rounded-xl p-6 border border-gray-200">
-        <div class="flex flex-col  gap-5 items-center justify-between mb-4">
-          <h2 class="text-xl font-semibold flex items-center gap-2">
-            <span>📊</span> Résumé
-          </h2>
-          <div class="flex flex-col w-full items-center gap-2 flex-wrap">
-            <select v-model="range" @change="refreshSummary" class="border w-full border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-800">
+        <div class="flex flex-col gap-4 mb-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-xl font-semibold flex items-center gap-2">
+              <span>📊</span> Résumé
+            </h2>
+            <select v-model="range" @change="onRangeChange" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-800">
               <option value="week">Semaine</option>
               <option value="month">Mois</option>
             </select>
-            <input v-model="start" type="date" class="border border-gray-300 w-full rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-800" @change="refreshSummary" />
+          </div>
+          
+          <!-- Navigation -->
+          <div class="flex items-center gap-2">
+            <button @click="goToPrevious" class="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition border border-gray-300">
+              ◀
+            </button>
+            <div class="flex-1 text-center font-medium text-gray-800">
+              {{ periodLabel }}
+            </div>
+            <button @click="goToNext" class="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition border border-gray-300">
+              ▶
+            </button>
+            <button @click="goToToday" class="px-3 py-2 text-xs bg-gray-800 hover:bg-gray-900 text-white rounded-lg transition whitespace-nowrap">
+              🔄 Aujourd'hui
+            </button>
           </div>
         </div>
 
@@ -197,7 +226,9 @@ import { ref, computed, onMounted } from 'vue';
 import { api } from '../api';
 import dayjs from 'dayjs';
 import isoWeek from 'dayjs/plugin/isoWeek';
+import 'dayjs/locale/fr';
 dayjs.extend(isoWeek);
+dayjs.locale('fr');
 
 const props = defineProps({ user: Object });
 const emit = defineEmits(['logout']);
@@ -224,6 +255,7 @@ const schoolDuration = computed(() => {
 });
 const err = ref('');
 const ok = ref(false);
+const prefillMessage = ref('');
 
 const range = ref('week');
 const start = ref(dayjs().format('YYYY-MM-DD'));
@@ -231,6 +263,18 @@ const summary = ref(null);
 const entries = ref([]);
 
 const defaultBreak = ref(45);
+
+const periodLabel = computed(() => {
+  if (!start.value) return '';
+  const d = dayjs(start.value);
+  if (range.value === 'week') {
+    const weekStart = d.isoWeekday(1);
+    const weekEnd = d.isoWeekday(7);
+    return `${weekStart.format('DD/MM')} - ${weekEnd.format('DD/MM/YYYY')}`;
+  } else {
+    return d.format('MMMM YYYY');
+  }
+});
 
 function labelService(s) {
   if (s === 'morning') return '🌅 Matin';
@@ -348,6 +392,73 @@ async function exportCsv() {
   a.download = `export_${s}_${e}.csv`;
   a.click();
   window.URL.revokeObjectURL(url);
+}
+
+function onRangeChange() {
+  // Quand on change de range, on repart sur aujourd'hui
+  start.value = dayjs().format('YYYY-MM-DD');
+  refreshSummary();
+}
+
+function goToToday() {
+  start.value = dayjs().format('YYYY-MM-DD');
+  refreshSummary();
+}
+
+function goToPrevious() {
+  const d = dayjs(start.value);
+  if (range.value === 'week') {
+    start.value = d.subtract(1, 'week').format('YYYY-MM-DD');
+  } else {
+    start.value = d.subtract(1, 'month').format('YYYY-MM-DD');
+  }
+  refreshSummary();
+}
+
+function goToNext() {
+  const d = dayjs(start.value);
+  if (range.value === 'week') {
+    start.value = d.add(1, 'week').format('YYYY-MM-DD');
+  } else {
+    start.value = d.add(1, 'month').format('YYYY-MM-DD');
+  }
+  refreshSummary();
+}
+
+async function copyLastService(serviceType) {
+  try {
+    err.value = '';
+    prefillMessage.value = '';
+    
+    // Chercher dans les 30 derniers jours
+    const endDate = dayjs().format('YYYY-MM-DD');
+    const startDate = dayjs().subtract(30, 'day').format('YYYY-MM-DD');
+    const { data } = await api.get('/entries', { params: { start: startDate, end: endDate } });
+    
+    // Filtrer les entrées du type de service demandé
+    const matchingEntries = data.filter(e => !e.isSchoolDay && e.service === serviceType);
+    
+    if (matchingEntries.length === 0) {
+      err.value = `Aucun service ${serviceType === 'morning' ? 'matin' : 'soir'} trouvé dans les 30 derniers jours`;
+      setTimeout(() => { err.value = ''; }, 3000);
+      return;
+    }
+    
+    // Prendre le plus récent
+    const lastEntry = matchingEntries[matchingEntries.length - 1];
+    
+    form.value.service = lastEntry.service;
+    form.value.startTime = lastEntry.startTime || '';
+    form.value.endTime = lastEntry.endTime || '';
+    form.value.breakMinutes = lastEntry.breakMinutes || defaultBreak.value;
+    form.value.isSchoolDay = false;
+    
+    prefillMessage.value = `Copié du ${dayjs(lastEntry.date).format('DD/MM/YYYY')} : ${labelService(lastEntry.service)} ${lastEntry.startTime}-${lastEntry.endTime}`;
+    setTimeout(() => { prefillMessage.value = ''; }, 5000);
+  } catch (e) {
+    err.value = 'Erreur lors de la copie';
+    setTimeout(() => { err.value = ''; }, 3000);
+  }
 }
 
 onMounted(() => {
