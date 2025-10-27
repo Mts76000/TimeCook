@@ -7,6 +7,7 @@
           <p class="text-xs sm:text-sm text-gray-500 truncate max-w-[200px]">{{ user?.name || user?.email }}</p>
         </div>
         <div class="flex items-center gap-2">
+          <button class="px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition shadow-sm" @click="$emit('settings')">⚙️</button>
           <button class="px-3 py-2 text-sm bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition shadow-sm" @click="$emit('logout')">Se déconnecter</button>
         </div>
       </div>
@@ -93,11 +94,15 @@
 
           
 
-          <button type="submit" class="w-full py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition shadow-md">
+          <button type="submit" class="w-full py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-all shadow-md hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98]">
              Ajouter l'entrée
           </button>
+          
+          <Transition name="success">
+            <p v-if="ok" class="text-green-700 text-sm bg-green-50 p-3 rounded-lg border border-green-200 animate-pulse">✓ Entrée ajoutée avec succès !</p>
+          </Transition>
+          
           <p v-if="err" class="text-red-600 text-sm bg-red-50 p-3 rounded-lg border border-red-200">❌ {{ err }}</p>
-          <p v-if="ok" class="text-green-700 text-sm bg-green-50 p-3 rounded-lg border border-green-200">✓ Entrée ajoutée avec succès</p>
         </form>
       </section>
 
@@ -181,7 +186,10 @@
                   </td>
                   <td class="p-3 text-right font-semibold">{{ formatMinutes(d.minutes) }}</td>
                   <td class="p-3 text-center">
-                    <button @click="deleteEntry(d.date)" class="text-red-600 hover:text-red-800 text-sm">🗑️</button>
+                    <div class="flex items-center justify-center gap-2">
+                      <button @click="openEditModal(d)" class="text-orange-600 hover:text-orange-800 text-sm transition-transform hover:scale-110">✏️</button>
+                      <button @click="deleteEntry(d.date)" class="text-red-600 hover:text-red-800 text-sm transition-transform hover:scale-110">🗑️</button>
+                    </div>
                   </td>
                 </tr>
               </tbody>
@@ -205,14 +213,15 @@
                   </div>
                 </template>
               </div>
-              <div class="mt-2 text-right">
-                <button @click="deleteEntry(d.date)" class="text-red-600 hover:text-red-800 text-sm">🗑️ Supprimer</button>
+              <div class="mt-2 flex items-center justify-end gap-3">
+                <button @click="openEditModal(d)" class="text-orange-600 hover:text-orange-800 text-sm transition-transform hover:scale-110">✏️ Modifier</button>
+                <button @click="deleteEntry(d.date)" class="text-red-600 hover:text-red-800 text-sm transition-transform hover:scale-110">🗑️ Supprimer</button>
               </div>
             </div>
           </div>
 
           <div class="flex gap-2">
-            <button @click="exportCsv" class="flex-1 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition shadow-md">📥 Exporter CSV</button>
+            <button @click="exportCsv" class="flex-1 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-all shadow-md hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98]">📥 Exporter CSV</button>
           </div>
         </div>
         <div v-else class="text-center text-gray-500 py-8">
@@ -220,6 +229,14 @@
         </div>
       </section>
     </main>
+
+    <!-- Edit Entry Modal -->
+    <EditEntryModal 
+      :is-open="editModalOpen" 
+      :entry="entryToEdit" 
+      @close="editModalOpen = false" 
+      @saved="onEntrySaved" 
+    />
   </div>
 </template>
 
@@ -229,11 +246,12 @@ import { api } from '../api';
 import dayjs from 'dayjs';
 import isoWeek from 'dayjs/plugin/isoWeek';
 import 'dayjs/locale/fr';
+import EditEntryModal from './EditEntryModal.vue';
 dayjs.extend(isoWeek);
 dayjs.locale('fr');
 
 const props = defineProps({ user: Object });
-const emit = defineEmits(['logout']);
+const emit = defineEmits(['logout', 'settings']);
 
 const form = ref({ 
   date: dayjs().format('YYYY-MM-DD'), 
@@ -463,8 +481,59 @@ async function copyLastService(serviceType) {
   }
 }
 
+// Edit modal
+const editModalOpen = ref(false);
+const entryToEdit = ref(null);
+
+function openEditModal(dayData) {
+  // Find the actual entry from entries array
+  const entry = entries.value.find(e => e.date === dayData.date);
+  if (entry) {
+    entryToEdit.value = entry;
+    editModalOpen.value = true;
+  }
+}
+
+async function onEntrySaved() {
+  await refreshSummary();
+  ok.value = true;
+  setTimeout(() => { ok.value = false; }, 2000);
+}
+
 onMounted(() => {
   loadUserDefaults();
   refreshSummary();
 });
 </script>
+
+<style scoped>
+/* Success animation */
+.success-enter-active {
+  animation: bounce-in 0.5s;
+}
+.success-leave-active {
+  animation: bounce-out 0.3s;
+}
+
+@keyframes bounce-in {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes bounce-out {
+  to {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+</style>
+

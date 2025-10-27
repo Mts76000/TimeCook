@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
-const { authenticateToken } = require("../middleware/auth");
+const authenticateToken = require("../middleware/auth");
 
 // GET /settings - Obtenir les paramètres utilisateur
 router.get("/", authenticateToken, async (req, res) => {
