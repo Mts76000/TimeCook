@@ -1,21 +1,21 @@
 <template>
-  <div class="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 text-gray-900">
-    <header class="bg-white shadow sticky top-0 z-10">
+  <div class="min-h-screen bg-linear-to-br from-orange-50 via-white to-orange-50 text-gray-900">
+    <header class="bg-white shadow sticky top-0 z-10 border-b border-orange-100">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
         <div>
           <h1 class="text-xl sm:text-2xl font-bold text-gray-800">TimeCook ⏰</h1>
           <p class="text-xs sm:text-sm text-gray-500 truncate max-w-[200px]">{{ user?.name || user?.email }}</p>
         </div>
         <div class="flex items-center gap-2">
-          <button class="px-3 py-2 text-sm bg-gray-800 hover:bg-gray-900 text-white rounded-lg transition" @click="$emit('logout')">Se déconnecter</button>
+          <button class="px-3 py-2 text-sm bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition shadow-sm" @click="$emit('logout')">Se déconnecter</button>
         </div>
       </div>
     </header>
 
   <main class="max-w-6xl mx-auto px-4 sm:px-6 py-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
       <!-- Add Entry Section -->
-      <section class="bg-white shadow-lg rounded-xl p-6 border border-gray-200">
-        <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
+      <section class="bg-white shadow-lg rounded-xl p-6 border border-orange-100">
+        <h2 class="text-xl font-semibold mb-4 flex items-center gap-2 text-gray-800">
           <span>➕</span> Ajouter une entrée
         </h2>
         
@@ -35,12 +35,12 @@
         <form @submit.prevent="addEntry" class="space-y-4">
           <div>
             <label class="block text-sm font-medium mb-2">Date</label>
-            <input v-model="form.date" type="date" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-800" required />
+            <input v-model="form.date" type="date" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" required />
           </div>
 
-          <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+          <div class="flex items-center gap-3 p-3 bg-orange-50 rounded-lg border border-orange-100">
             <label class="text-sm font-medium cursor-pointer flex items-center gap-2">
-              <input type="checkbox" v-model="form.isSchoolDay" class="w-4 h-4 accent-gray-800" />
+              <input type="checkbox" v-model="form.isSchoolDay" class="w-4 h-4 accent-orange-500" />
               📚 Jour de cours
             </label>
           </div>
@@ -49,15 +49,15 @@
             <div class="flex flex-col gap-3">
               <div>
                 <label class="block text-sm font-medium mb-2">Début des cours</label>
-                <input v-model="form.schoolStart" type="time" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-800" />
+                <input v-model="form.schoolStart" type="time" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" />
               </div>
               <div>
                 <label class="block text-sm font-medium mb-2">Fin des cours</label>
-                <input v-model="form.schoolEnd" type="time" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-800" />
+                <input v-model="form.schoolEnd" type="time" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" />
               </div>
               <div>
                 <label class="block text-sm font-medium mb-2">Pause (minutes)</label>
-                <input v-model.number="form.schoolPause" type="number" min="0" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-800" placeholder="ex: 45" />
+                <input v-model.number="form.schoolPause" type="number" min="0" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" placeholder="ex: 45" />
               </div>
               <div v-if="schoolDuration !== null" class="text-xs text-gray-700 mt-1">
                 Durée nette calculée : <span class="font-bold">{{ formatMinutes(schoolDuration) }}</span>
@@ -69,7 +69,7 @@
             <div class="flex flex-col sm:grid sm:grid-cols-2 gap-4">
               <div class="min-w-0">
                 <label class="block text-sm font-medium mb-2">Service</label>
-                <select v-model="form.service" class="w-full min-w-0 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-800">
+                <select v-model="form.service" class="w-full min-w-0 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
                   <option value="morning">🌅 Matin</option>
                   <option value="evening">🌙 Soir</option>
                   <option value="full">📅 Autre</option>
@@ -77,38 +77,38 @@
               </div>
               <div class="min-w-0">
                 <label class="block text-sm font-medium mb-2">Début</label>
-                <input v-model="form.startTime" type="time" class="w-full min-w-0 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-800" required />
+                <input v-model="form.startTime" type="time" class="w-full min-w-0 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" required />
               </div>
             </div>
             <div>
               <label class="block text-sm font-medium mb-2">Fin</label>
-              <input v-model="form.endTime" type="time" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-800" required />
+              <input v-model="form.endTime" type="time" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" required />
             </div>
             <div>
               <label class="block text-sm font-medium mb-2">Pause (minutes)</label>
-              <input v-model.number="form.breakMinutes" type="number" min="0" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-800" placeholder="ex: 45" />
+              <input v-model.number="form.breakMinutes" type="number" min="0" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" placeholder="ex: 45" />
               <p class="text-xs text-gray-500 mt-1">Par défaut: {{ defaultBreak }} min</p>
             </div>
           </template>
 
           
 
-          <button type="submit" class="w-full py-3 bg-gray-800 hover:bg-gray-900 text-white font-medium rounded-lg transition shadow-md">
-            ➕ Ajouter l'entrée
+          <button type="submit" class="w-full py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition shadow-md">
+             Ajouter l'entrée
           </button>
-          <p v-if="err" class="text-red-600 text-sm bg-red-50 p-3 rounded-lg">❌ {{ err }}</p>
-          <p v-if="ok" class="text-green-700 text-sm bg-green-50 p-3 rounded-lg">✓ Entrée ajoutée avec succès</p>
+          <p v-if="err" class="text-red-600 text-sm bg-red-50 p-3 rounded-lg border border-red-200">❌ {{ err }}</p>
+          <p v-if="ok" class="text-green-700 text-sm bg-green-50 p-3 rounded-lg border border-green-200">✓ Entrée ajoutée avec succès</p>
         </form>
       </section>
 
       <!-- Summary Section -->
-      <section class="bg-white shadow-lg rounded-xl p-6 border border-gray-200">
+      <section class="bg-white shadow-lg rounded-xl p-6 border border-orange-100">
         <div class="flex flex-col gap-4 mb-4">
           <div class="flex items-center justify-between">
-            <h2 class="text-xl font-semibold flex items-center gap-2">
+            <h2 class="text-xl font-semibold flex items-center gap-2 text-gray-800">
               <span>📊</span> Résumé
             </h2>
-            <select v-model="range" @change="onRangeChange" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-800">
+            <select v-model="range" @change="onRangeChange" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
               <option value="week">Semaine</option>
               <option value="month">Mois</option>
             </select>
@@ -127,14 +127,14 @@
               ▶
             </button>
             </div>
-            <button @click="goToToday" class="px-3 py-2 text-xs bg-gray-800 hover:bg-gray-900 text-white rounded-lg transition whitespace-nowrap">
+            <button @click="goToToday" class="px-3 py-2 text-xs bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition whitespace-nowrap shadow-sm">
               🔄 Aujourd'hui
             </button>
           </div>
         </div>
 
         <div v-if="summary" class="space-y-4">
-          <div class="bg-linear-to-r from-gray-100 to-gray-50 p-4 rounded-lg border border-gray-200">
+          <div class="bg-linear-to-r from-orange-50 to-orange-100/50 p-4 rounded-lg border border-orange-200">
             <div class="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <p class="text-gray-600">Total heures</p>
@@ -212,7 +212,7 @@
           </div>
 
           <div class="flex gap-2">
-            <button @click="exportCsv" class="flex-1 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition shadow">📥 Exporter CSV</button>
+            <button @click="exportCsv" class="flex-1 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition shadow-md">📥 Exporter CSV</button>
           </div>
         </div>
         <div v-else class="text-center text-gray-500 py-8">
