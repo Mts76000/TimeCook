@@ -137,7 +137,10 @@
     <main v-else class="max-w-4xl mx-auto px-4 sm:px-6 py-6">
       <div class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
         <p class="text-lg font-semibold text-red-800 mb-2">❌ Accès refusé</p>
-        <p class="text-sm text-red-600">{{ error }}</p>
+        <p class="text-sm text-red-600 mb-4">{{ error }}</p>
+        <p class="text-xs text-gray-600">
+          💡 Assurez-vous d'utiliser le lien complet que vous avez reçu
+        </p>
       </div>
     </main>
   </div>
@@ -145,7 +148,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import isoWeek from 'dayjs/plugin/isoWeek';
@@ -154,12 +157,14 @@ dayjs.extend(isoWeek);
 dayjs.locale('fr');
 
 const route = useRoute();
+const router = useRouter();
 
 const userId = ref(route.params.userId);
-const email = ref(route.query.email);
+const token = ref(route.query.token);
 const ownerName = ref('');
 const loading = ref(true);
 const error = ref('');
+const needsEmail = ref(false);
 
 const range = ref('week');
 const start = ref(dayjs().format('YYYY-MM-DD'));
@@ -211,8 +216,8 @@ async function refreshSummary() {
   loading.value = true;
   error.value = '';
   
-  if (!email.value) {
-    error.value = 'Email requis pour accéder à cette vue';
+  if (!token.value) {
+    error.value = 'Token manquant. Vérifiez le lien que vous avez reçu.';
     loading.value = false;
     return;
   }
@@ -227,7 +232,7 @@ async function refreshSummary() {
       params: { 
         range: range.value, 
         start: weekStart,
-        email: email.value 
+        token: token.value 
       }
     });
     
@@ -238,6 +243,10 @@ async function refreshSummary() {
     error.value = e?.response?.data?.error || 'Erreur de chargement';
     loading.value = false;
   }
+}
+
+function submitEmail() {
+  // This function is no longer needed but kept for compatibility
 }
 
 function onRangeChange() {

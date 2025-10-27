@@ -1,15 +1,15 @@
-import { createRouter, createWebHistory } from 'vue-router';
-import App from './AppWrapper.vue';
-import SharedView from './components/SharedView.vue';
+import { createRouter, createWebHistory } from "vue-router";
+import AppWrapper from "./AppWrapper.vue";
+import SharedView from "./components/SharedView.vue";
 
 const routes = [
   {
-    path: '/',
-    component: App,
+    path: "/",
+    component: AppWrapper,
   },
   {
-    path: '/shared/:userId',
-    name: 'SharedView',
+    path: "/shared/:userId",
+    name: "SharedView",
     component: SharedView,
   },
 ];

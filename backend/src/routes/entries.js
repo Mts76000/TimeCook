@@ -124,17 +124,17 @@ router.put("/:id", async (req, res) => {
       breakMinutes,
       schoolHours,
     } = req.body || {};
-    
+
     const doc = await TimeEntry.findOne({
       _id: req.params.id,
       userId: req.user.id,
     });
-    
+
     if (!doc) return res.status(404).json({ error: "Not found" });
-    
+
     if (date) doc.date = date;
     doc.isSchoolDay = isSchoolDay;
-    
+
     if (isSchoolDay) {
       doc.schoolHours = schoolHours;
       doc.service = undefined;
@@ -145,10 +145,11 @@ router.put("/:id", async (req, res) => {
       doc.service = service || doc.service;
       doc.startTime = startTime || doc.startTime;
       doc.endTime = endTime || doc.endTime;
-      doc.breakMinutes = breakMinutes !== undefined ? breakMinutes : doc.breakMinutes;
+      doc.breakMinutes =
+        breakMinutes !== undefined ? breakMinutes : doc.breakMinutes;
       doc.schoolHours = undefined;
     }
-    
+
     await doc.save();
     res.json(doc);
   } catch (e) {
