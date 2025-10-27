@@ -14,7 +14,10 @@ const UserSchema = new mongoose.Schema(
     name: { type: String, trim: true },
     // optional settings
     weeklyTargetHours: { type: Number, default: 35 },
+    monthlyTargetHours: { type: Number, default: 152 },
     defaultBreakMinutes: { type: Number, default: 45 },
+    // Partage en lecture seule
+    sharedWithEmails: [{ type: String, lowercase: true, trim: true }],
   },
   { timestamps: true }
 );

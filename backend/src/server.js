@@ -21,6 +21,8 @@ app.get("/health", (req, res) => {
 app.use("/auth", require("./routes/auth"));
 app.use("/entries", require("./routes/entries"));
 app.use("/export", require("./routes/export"));
+app.use("/settings", require("./routes/settings"));
+app.use("/shared", require("./routes/shared"));
 
 // 404 handler
 app.use((req, res) => {

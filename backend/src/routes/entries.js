@@ -86,6 +86,7 @@ router.get("/summary", async (req, res) => {
 
     const sum = summarize(items, {
       weeklyTargetHours: user?.weeklyTargetHours || 35,
+      monthlyTargetHours: user?.monthlyTargetHours || 152,
       breakMinutes: user?.defaultBreakMinutes || 45,
       range,
     });
@@ -105,6 +106,51 @@ router.delete("/:id", async (req, res) => {
     });
     if (!doc) return res.status(404).json({ error: "Not found" });
     res.json({ deleted: true });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Update an entry
+router.put("/:id", async (req, res) => {
+  try {
+    const {
+      date,
+      service,
+      startTime,
+      endTime,
+      isSchoolDay = false,
+      breakMinutes,
+      schoolHours,
+    } = req.body || {};
+    
+    const doc = await TimeEntry.findOne({
+      _id: req.params.id,
+      userId: req.user.id,
+    });
+    
+    if (!doc) return res.status(404).json({ error: "Not found" });
+    
+    if (date) doc.date = date;
+    doc.isSchoolDay = isSchoolDay;
+    
+    if (isSchoolDay) {
+      doc.schoolHours = schoolHours;
+      doc.service = undefined;
+      doc.startTime = undefined;
+      doc.endTime = undefined;
+      doc.breakMinutes = undefined;
+    } else {
+      doc.service = service || doc.service;
+      doc.startTime = startTime || doc.startTime;
+      doc.endTime = endTime || doc.endTime;
+      doc.breakMinutes = breakMinutes !== undefined ? breakMinutes : doc.breakMinutes;
+      doc.schoolHours = undefined;
+    }
+    
+    await doc.save();
+    res.json(doc);
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: "Server error" });

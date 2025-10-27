@@ -33,6 +33,7 @@ function netServiceMinutes(startTime, endTime, breakMinutes = 45) {
 // Summarize entries list
 function summarize(entries, options = {}) {
   const weeklyTargetHours = options.weeklyTargetHours || 35;
+  const monthlyTargetHours = options.monthlyTargetHours || 152;
   const defaultBreakMinutes = options.breakMinutes || 45;
   const range = options.range || "week"; // 'week' or 'month'
 
@@ -79,8 +80,7 @@ function summarize(entries, options = {}) {
   // Calculate target hours based on range
   let targetHours = weeklyTargetHours;
   if (range === "month") {
-    // Monthly target: exactly 152h (35h * 4.343 ≈ 152)
-    targetHours = 152;
+    targetHours = monthlyTargetHours;
   }
 
   const overtimeHours = Math.max(0, totalHours - targetHours);
