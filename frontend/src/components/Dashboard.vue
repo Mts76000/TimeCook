@@ -35,7 +35,7 @@
         <form @submit.prevent="addEntry" class="space-y-4">
           <div>
             <label class="block text-sm font-medium mb-2">Date</label>
-            <input v-model="form.date" type="date" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" required />
+            <input v-model="form.date" type="date" class="w-full border border-gray-300 block rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" required />
           </div>
 
           <div class="flex items-center gap-3 p-3 bg-orange-50 rounded-lg border border-orange-100">
@@ -49,11 +49,11 @@
             <div class="flex flex-col gap-3">
               <div>
                 <label class="block text-sm font-medium mb-2">Début des cours</label>
-                <input v-model="form.schoolStart" type="time" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                <input v-model="form.schoolStart" type="time" class="w-full border block border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" />
               </div>
               <div>
                 <label class="block text-sm font-medium mb-2">Fin des cours</label>
-                <input v-model="form.schoolEnd" type="time" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                <input v-model="form.schoolEnd" type="time" class="w-full border blockborder-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" />
               </div>
               <div>
                 <label class="block text-sm font-medium mb-2">Pause (minutes)</label>
@@ -77,12 +77,12 @@
               </div>
               <div class="min-w-0">
                 <label class="block text-sm font-medium mb-2">Début</label>
-                <input v-model="form.startTime" type="time" class="w-full min-w-0 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" required />
+                <input v-model="form.startTime" type="time" class="w-full min-w-0 block border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" required />
               </div>
             </div>
             <div>
               <label class="block text-sm font-medium mb-2">Fin</label>
-              <input v-model="form.endTime" type="time" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" required />
+              <input v-model="form.endTime" type="time" class="w-full border block border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" required />
             </div>
             <div>
               <label class="block text-sm font-medium mb-2">Pause (minutes)</label>
