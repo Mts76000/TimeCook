@@ -42,7 +42,7 @@
         <form @submit.prevent="addEntry" class="space-y-5">
           <div>
             <label class="block text-sm font-medium mb-2 text-gray-700">Date</label>
-            <input v-model="form.date" type="date" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all" required />
+            <input v-model="form.date" type="date" class="w-full border border-gray-300 rounded-xl px-4 h-12 text-[16px] focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all appearance-none [&::-webkit-datetime-edit]:p-0 [&::-webkit-datetime-edit-fields-wrapper]:p-0 [&::-webkit-date-and-time-value]:leading-none" required />
           </div>
 
           <div class="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200">
@@ -56,15 +56,15 @@
             <div class="flex flex-col gap-4">
               <div>
                 <label class="block text-sm font-medium mb-2 text-gray-700">Début des cours</label>
-                <input v-model="form.schoolStart" type="time" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all" />
+                <input v-model="form.schoolStart" type="time" class="w-full border border-gray-300 rounded-xl px-4 h-12 text-[16px] focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all appearance-none [&::-webkit-datetime-edit]:p-0 [&::-webkit-datetime-edit-fields-wrapper]:p-0 [&::-webkit-date-and-time-value]:leading-none" />
               </div>
               <div>
                 <label class="block text-sm font-medium mb-2 text-gray-700">Fin des cours</label>
-                <input v-model="form.schoolEnd" type="time" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all" />
+                <input v-model="form.schoolEnd" type="time" class="w-full border border-gray-300 rounded-xl px-4 h-12 text-[16px] focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all appearance-none [&::-webkit-datetime-edit]:p-0 [&::-webkit-datetime-edit-fields-wrapper]:p-0 [&::-webkit-date-and-time-value]:leading-none" />
               </div>
               <div>
                 <label class="block text-sm font-medium mb-2 text-gray-700">Pause (minutes)</label>
-                <input v-model.number="form.schoolPause" type="number" min="0" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all" placeholder="ex: 45" />
+                <input v-model.number="form.schoolPause" type="number" min="0" class="w-full border border-gray-300 rounded-xl px-4 h-12 text-[16px] focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all" placeholder="ex: 45" />
               </div>
               <div v-if="schoolDuration !== null" class="text-sm text-gray-600 bg-gray-50 p-3 rounded-xl">
                 Durée nette : <span class="font-semibold text-gray-900">{{ formatMinutes(schoolDuration) }}</span>
@@ -76,7 +76,7 @@
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <label class="block text-sm font-medium mb-2 text-gray-700">Service</label>
-                <select v-model="form.service" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all bg-white">
+                <select v-model="form.service" class="w-full border border-gray-300 rounded-xl px-4 h-12 text-[16px] focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all bg-white">
                   <option value="morning">🌅 Matin</option>
                   <option value="evening">🌙 Soir</option>
                   <option value="full">📅 Autre</option>
@@ -84,16 +84,16 @@
               </div>
               <div>
                 <label class="block text-sm font-medium mb-2 text-gray-700">Début</label>
-                <input v-model="form.startTime" type="time" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all" required />
+                <input v-model="form.startTime" type="time" class="w-full border border-gray-300 rounded-xl px-4 h-12 text-[16px] focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all appearance-none [&::-webkit-datetime-edit]:p-0 [&::-webkit-datetime-edit-fields-wrapper]:p-0 [&::-webkit-date-and-time-value]:leading-none" required />
               </div>
             </div>
             <div>
               <label class="block text-sm font-medium mb-2 text-gray-700">Fin</label>
-              <input v-model="form.endTime" type="time" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all" required />
+              <input v-model="form.endTime" type="time" class="w-full border border-gray-300 rounded-xl px-4 h-12 text-[16px] focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all appearance-none [&::-webkit-datetime-edit]:p-0 [&::-webkit-datetime-edit-fields-wrapper]:p-0 [&::-webkit-date-and-time-value]:leading-none" required />
             </div>
             <div>
               <label class="block text-sm font-medium mb-2 text-gray-700">Pause (minutes)</label>
-              <input v-model.number="form.breakMinutes" type="number" min="0" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all" placeholder="ex: 45" />
+              <input v-model.number="form.breakMinutes" type="number" min="0" class="w-full border border-gray-300 rounded-xl px-4 h-12 text-[16px] focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all" placeholder="ex: 45" />
               <p class="text-xs text-gray-500 mt-2">Par défaut: {{ defaultBreak }} min</p>
             </div>
           </template>
