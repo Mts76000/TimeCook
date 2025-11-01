@@ -112,7 +112,8 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, nextTick } from 'vue';
+import dayjs from 'dayjs';
 import { api } from '../api';
 
 const props = defineProps({
@@ -133,10 +134,12 @@ const editForm = ref({
 });
 
 const error = ref('');
+const isInitializing = ref(false);
 
 // Watch for entry changes to populate form
 watch(() => props.entry, (newEntry) => {
   if (newEntry) {
+    isInitializing.value = true;
     editForm.value = {
       date: newEntry.date || '',
       service: newEntry.service || 'morning',
@@ -146,8 +149,48 @@ watch(() => props.entry, (newEntry) => {
       isSchoolDay: newEntry.isSchoolDay || false,
       schoolHours: newEntry.schoolHours ?? null,
     };
+    nextTick(() => { isInitializing.value = false; });
   }
 }, { immediate: true });
+
+// Prefill start/end/break from the last similar service within the last 30 days
+async function prefillFromLast(serviceType) {
+  try {
+    const endDate = dayjs().format('YYYY-MM-DD');
+    const startDate = dayjs().subtract(30, 'day').format('YYYY-MM-DD');
+    const { data } = await api.get('/entries', { params: { start: startDate, end: endDate } });
+    const matching = data.filter(e => !e.isSchoolDay && e.service === serviceType);
+    if (matching.length === 0) {
+      // No previous entry: clear times to avoid keeping morning hours
+      editForm.value.startTime = '';
+      editForm.value.endTime = '';
+      return;
+    }
+    const last = matching[matching.length - 1];
+    editForm.value.startTime = last.startTime || '';
+    editForm.value.endTime = last.endTime || '';
+    if (last.breakMinutes != null) {
+      editForm.value.breakMinutes = last.breakMinutes;
+    }
+  } catch (e) {
+    // Silent fail: do not block user
+    console.error('Prefill error', e);
+  }
+}
+
+// When the service changes in edit mode, adjust the times accordingly
+watch(() => editForm.value.service, (newService, oldService) => {
+  if (isInitializing.value) return;
+  if (editForm.value.isSchoolDay) return;
+  if (!newService || newService === oldService) return;
+  if (newService === 'full') {
+    // Custom: clear to force user to set
+    editForm.value.startTime = '';
+    editForm.value.endTime = '';
+  } else if (newService === 'morning' || newService === 'evening') {
+    prefillFromLast(newService);
+  }
+});
 
 function close() {
   error.value = '';

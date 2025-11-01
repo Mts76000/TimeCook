@@ -205,6 +205,7 @@
                       </div>
                       <div v-else class="space-y-1">
                         <div v-for="s in d.services" :key="s.service + s.startTime" class="text-sm text-gray-700">
+                          <span class="mr-1">{{ serviceIcon(s.service) }}</span>
                           <span class="font-mono">{{ s.startTime }}–{{ s.endTime }}</span>
                           <span v-if="s.breakMinutesUsed > 0" class="text-xs text-gray-500"> • pause {{ s.breakMinutesUsed }} min</span>
                         </div>
@@ -245,6 +246,7 @@
                 
                 <div v-else class="mb-2 space-y-1">
                   <div v-for="s in d.services" :key="s.service + s.startTime" class="text-sm text-gray-700">
+                    <span class="mr-1">{{ serviceIcon(s.service) }}</span>
                     <span class="font-mono">{{ s.startTime }}–{{ s.endTime }}</span>
                     <span v-if="s.breakMinutesUsed > 0" class="text-xs text-gray-500"> • pause {{ s.breakMinutesUsed }} min</span>
                   </div>
@@ -341,6 +343,12 @@ function labelService(s) {
   if (s === 'morning') return '🌅 Matin';
   if (s === 'evening') return '🌙 Soir';
   return '📅 Service';
+}
+
+function serviceIcon(s) {
+  if (s === 'morning') return '🌅';
+  if (s === 'evening') return '🌙';
+  return '📅';
 }
 
 function formatDate(d) {
