@@ -1,13 +1,14 @@
 <template>
   <Transition name="modal">
-    <div v-if="isOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" @click.self="close">
-      <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto transform transition-all">
-        <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-          <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
-            ✏️ Modifier l'entrée
+    <div v-if="isOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-950/55 p-4 backdrop-blur-sm" @click.self="close">
+      <div class="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl bg-white shadow-2xl shadow-gray-950/20">
+        <div class="sticky top-0 flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4">
+          <h2 class="flex items-center gap-2 text-xl font-semibold text-gray-950">
+            <Pencil class="h-5 w-5 text-orange-500" />
+            Modifier l'entrée
           </h2>
-          <button @click="close" class="text-gray-500 hover:text-gray-700 transition-colors text-2xl leading-none">
-            ×
+          <button @click="close" class="grid h-9 w-9 place-items-center rounded-lg text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-800" aria-label="Fermer">
+            <X class="h-5 w-5" />
           </button>
         </div>
 
@@ -22,10 +23,11 @@
             />
           </div>
 
-          <div class="flex items-center gap-3 p-3 bg-orange-50 rounded-lg border border-orange-100">
+          <div class="flex items-center gap-3 rounded-lg border border-orange-100 bg-orange-50 p-3">
             <label class="text-sm font-medium cursor-pointer flex items-center gap-2">
               <input type="checkbox" v-model="editForm.isSchoolDay" class="w-4 h-4 accent-orange-500" />
-              📚 Jour de cours
+              <GraduationCap class="h-4 w-4 text-orange-600" />
+              Jour de cours
             </label>
           </div>
 
@@ -50,9 +52,9 @@
               <div>
                 <label class="block text-sm font-medium mb-2">Service</label>
                 <select v-model="editForm.service" class="w-full border border-gray-300 rounded-lg px-3 h-11 text-[16px] focus:outline-none focus:ring-2 focus:ring-orange-500">
-                  <option value="morning">🌅 Matin</option>
-                  <option value="evening">🌙 Soir</option>
-                  <option value="full">📅 Autre</option>
+                  <option value="morning">Matin</option>
+                  <option value="evening">Soir</option>
+                  <option value="full">Autre</option>
                 </select>
               </div>
               <div>
@@ -90,20 +92,22 @@
             <button 
               type="button" 
               @click="close"
-              class="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-all"
+              class="flex-1 rounded-lg bg-gray-100 py-3 font-medium text-gray-700 transition hover:bg-gray-200"
             >
               Annuler
             </button>
             <button 
               type="submit" 
-              class="flex-1 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-all shadow-md hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98]"
+              class="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-orange-500 py-3 font-semibold text-white shadow-sm shadow-orange-500/20 transition hover:bg-orange-600"
             >
-              💾 Enregistrer
+              <Save class="h-4 w-4" />
+              Enregistrer
             </button>
           </div>
 
-          <p v-if="error" class="text-red-600 text-sm bg-red-50 p-3 rounded-lg border border-red-200">
-            ❌ {{ error }}
+          <p v-if="error" class="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm font-medium text-red-700">
+            <TriangleAlert class="mt-0.5 h-4 w-4 shrink-0" />
+            {{ error }}
           </p>
         </form>
       </div>
@@ -115,6 +119,7 @@
 import { ref, watch, nextTick } from 'vue';
 import dayjs from 'dayjs';
 import { api } from '../api';
+import { GraduationCap, Pencil, Save, TriangleAlert, X } from '@lucide/vue';
 
 const props = defineProps({
   isOpen: Boolean,

@@ -1,42 +1,56 @@
 <template>
-    <div class="min-h-screen bg-gray-50 text-gray-900">
-    <header class="bg-white/95 backdrop-blur-xl shadow-sm sticky top-0 z-10 border-b border-gray-200">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-5 flex items-center justify-between">
-        <div>
-          <h1 class="text-2xl sm:text-3xl font-semibold text-gray-900">TimeCook</h1>
-          <p class="text-sm text-gray-500 mt-0.5">{{ user?.name || user?.email }}</p>
+    <div class="min-h-screen bg-[#fff8f1] text-gray-950">
+    <header class="sticky top-0 z-10 border-b border-orange-100/80 bg-white/90 backdrop-blur-xl">
+      <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6">
+        <div class="flex items-center gap-3">
+          <span class="grid h-10 w-10 place-items-center rounded-lg bg-orange-500 text-white shadow-sm shadow-orange-500/20">
+            <Clock3 class="h-5 w-5" />
+          </span>
+          <div>
+            <h1 class="text-xl font-semibold leading-none text-gray-950">TimeCook</h1>
+            <p class="mt-1 text-sm text-gray-500">{{ user?.name || user?.email }}</p>
+          </div>
         </div>
         <div class="flex items-center gap-3">
-          <button class="p-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full transition-all duration-200" @click="$emit('settings')">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-            </svg>
+          <button class="grid h-10 w-10 place-items-center rounded-lg border border-gray-200 bg-white text-gray-700 transition hover:bg-gray-50" @click="$emit('settings')" aria-label="Paramètres">
+            <SettingsIcon class="h-5 w-5" />
           </button>
-          <button class="px-4 py-2.5 bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium rounded-full transition-all duration-200 shadow-sm" @click="$emit('logout')">Se déconnecter</button>
+          <button class="inline-flex h-10 items-center gap-2 rounded-lg bg-gray-950 px-4 text-sm font-semibold text-white transition hover:bg-gray-800" @click="$emit('logout')">
+            <LogOut class="h-4 w-4" />
+            <span class="hidden sm:inline">Se déconnecter</span>
+          </button>
         </div>
       </div>
     </header>
 
-  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+  <main class="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[0.9fr_1.1fr]">
       <!-- Add Entry Section -->
-      <section class="bg-white rounded-2xl p-8 shadow-sm border border-gray-200">
-        <h2 class="text-xl font-semibold mb-6 text-gray-900">Ajouter une entrée</h2>
+      <section class="rounded-xl border border-orange-100 bg-white p-5 shadow-sm sm:p-6">
+        <div class="mb-6 flex items-center justify-between">
+          <div>
+            <p class="text-sm font-semibold uppercase tracking-wide text-orange-600">Saisie</p>
+            <h2 class="mt-1 text-xl font-semibold text-gray-950">Ajouter une entrée</h2>
+          </div>
+          <Plus class="h-5 w-5 text-orange-500" />
+        </div>
         
         <!-- Copy buttons -->
         <div v-if="!form.isSchoolDay" class="mb-6">
           <p class="text-xs text-gray-500 mb-2 font-medium">Copier le dernier service</p>
           <div class="grid grid-cols-2 gap-3">
-            <button type="button" @click="copyLastService('morning')" class="px-4 py-3 bg-orange-50 hover:bg-orange-100 text-orange-700 rounded-xl transition-all duration-200 border border-orange-200 text-sm font-medium">
-              🌅 Matin
+            <button type="button" @click="copyLastService('morning')" class="inline-flex items-center justify-center gap-2 rounded-lg border border-orange-200 bg-orange-50 px-4 py-3 text-sm font-medium text-orange-700 transition hover:bg-orange-100">
+              <Sun class="h-4 w-4" />
+              Matin
             </button>
-            <button type="button" @click="copyLastService('evening')" class="px-4 py-3 bg-orange-50 hover:bg-orange-100 text-orange-700 rounded-xl transition-all duration-200 border border-orange-200 text-sm font-medium">
-              🌙 Soir
+            <button type="button" @click="copyLastService('evening')" class="inline-flex items-center justify-center gap-2 rounded-lg border border-orange-200 bg-orange-50 px-4 py-3 text-sm font-medium text-orange-700 transition hover:bg-orange-100">
+              <Moon class="h-4 w-4" />
+              Soir
             </button>
           </div>
         </div>
-        <p v-if="prefillMessage" class="text-sm text-green-600 mb-4 bg-green-50 p-3 rounded-xl font-medium">
-          ✓ {{ prefillMessage }}
+        <p v-if="prefillMessage" class="mb-4 flex items-start gap-2 rounded-lg bg-green-50 p-3 text-sm font-medium text-green-700">
+          <CheckCircle2 class="mt-0.5 h-4 w-4 shrink-0" />
+          {{ prefillMessage }}
         </p>
         
         <form @submit.prevent="addEntry" class="space-y-5">
@@ -45,10 +59,11 @@
             <input v-model="form.date" type="date" class="w-full border border-gray-300 rounded-xl px-4 h-12 text-[16px] focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all appearance-none [&::-webkit-datetime-edit]:p-0 [&::-webkit-datetime-edit-fields-wrapper]:p-0 [&::-webkit-date-and-time-value]:leading-none" required />
           </div>
 
-          <div class="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200">
+          <div class="flex items-center gap-3 rounded-lg border border-gray-200 bg-gray-50 p-4">
             <label class="text-sm font-medium cursor-pointer flex items-center gap-2 text-gray-700">
               <input type="checkbox" v-model="form.isSchoolDay" class="w-4 h-4 accent-gray-900 cursor-pointer rounded" />
-              📚 Jour de cours
+              <GraduationCap class="h-4 w-4 text-orange-500" />
+              Jour de cours
             </label>
           </div>
 
@@ -77,9 +92,9 @@
               <div>
                 <label class="block text-sm font-medium mb-2 text-gray-700">Service</label>
                 <select v-model="form.service" class="w-full border border-gray-300 rounded-xl px-4 h-12 text-[16px] focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all bg-white">
-                  <option value="morning">🌅 Matin</option>
-                  <option value="evening">🌙 Soir</option>
-                  <option value="full">📅 Autre</option>
+                  <option value="morning">Matin</option>
+                  <option value="evening">Soir</option>
+                  <option value="full">Autre</option>
                 </select>
               </div>
               <div>
@@ -100,23 +115,30 @@
 
           
 
-          <button type="submit" class="w-full py-3.5 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-xl transition-all duration-200 shadow-sm">
+          <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-orange-500 py-3.5 font-semibold text-white shadow-sm shadow-orange-500/20 transition hover:bg-orange-600">
+            <Plus class="h-5 w-5" />
             Ajouter l'entrée
           </button>
           
           <Transition name="success">
-            <p v-if="ok" class="text-green-600 text-sm bg-green-50 p-4 rounded-xl font-medium">✓ Entrée ajoutée avec succès !</p>
+            <p v-if="ok" class="flex items-start gap-2 rounded-lg bg-green-50 p-4 text-sm font-medium text-green-700">
+              <CheckCircle2 class="mt-0.5 h-4 w-4 shrink-0" />
+              Entrée ajoutée avec succès.
+            </p>
           </Transition>
           
-          <p v-if="err" class="text-red-600 text-sm bg-red-50 p-4 rounded-xl font-medium">❌ {{ err }}</p>
+          <p v-if="err" class="flex items-start gap-2 rounded-lg bg-red-50 p-4 text-sm font-medium text-red-700">
+            <TriangleAlert class="mt-0.5 h-4 w-4 shrink-0" />
+            {{ err }}
+          </p>
         </form>
       </section>
 
       <!-- Summary Section -->
-      <section class="bg-white rounded-2xl p-8 shadow-sm border border-gray-200">
+      <section class="rounded-xl border border-orange-100 bg-white p-5 shadow-sm sm:p-6">
         <div class="flex flex-col gap-6 mb-6">
           <div class="flex items-center justify-between">
-            <h2 class="text-xl font-semibold text-gray-900">
+            <h2 class="text-xl font-semibold text-gray-950">
               Résumé
             </h2>
             <select v-model="range" @change="onRangeChange" class="border border-gray-300 rounded-xl px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent bg-white transition-all">
@@ -128,18 +150,14 @@
           <!-- Navigation -->
           <div class="flex flex-col items-center gap-3">
             <div class="flex items-center gap-3 w-full">
-              <button @click="goToPrevious" class="p-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-all duration-200">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                </svg>
+              <button @click="goToPrevious" class="grid h-10 w-10 place-items-center rounded-lg bg-gray-100 text-gray-700 transition hover:bg-gray-200" aria-label="Période précédente">
+                <ChevronLeft class="h-5 w-5" />
               </button>
               <div class="flex-1 text-center font-medium text-gray-900">
                 {{ periodLabel }}
               </div>
-              <button @click="goToNext" class="p-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-all duration-200">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                </svg>
+              <button @click="goToNext" class="grid h-10 w-10 place-items-center rounded-lg bg-gray-100 text-gray-700 transition hover:bg-gray-200" aria-label="Période suivante">
+                <ChevronRight class="h-5 w-5" />
               </button>
             </div>
             <button @click="goToToday" class="px-4 py-2 text-sm bg-orange-500 hover:bg-orange-600 text-white rounded-xl transition-all duration-200 font-medium">
@@ -173,10 +191,12 @@
 
           <!-- Actions: toggle details + quick export -->
           <div class="flex items-center justify-between">
-            <button @click="showDetails = !showDetails" class="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-colors text-sm font-medium">
+            <button @click="showDetails = !showDetails" class="inline-flex items-center gap-2 rounded-lg bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200">
+              <List class="h-4 w-4" />
               {{ showDetails ? 'Masquer les jours' : 'Afficher les jours' }}
             </button>
-            <button @click="exportCsv" class="px-3 py-2 bg-gray-900 hover:bg-gray-800 text-white rounded-xl transition-colors text-sm font-medium">
+            <button @click="exportCsv" class="inline-flex items-center gap-2 rounded-lg bg-gray-950 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800">
+              <Download class="h-4 w-4" />
               Exporter CSV
             </button>
           </div>
@@ -199,13 +219,13 @@
                   <tr v-for="d in summary.byDate" :key="d.date" class="hover:bg-gray-50 transition-colors">
                     <td class="p-4 font-medium text-gray-900">{{ formatDate(d.date) }}</td>
                     <td class="p-4 align-top">
-                      <div v-if="d.isSchoolDay" class="text-sm text-blue-700">
-                        <span class="font-medium">📚 Cours</span>
-                        <span class="text-xs text-blue-600/70"> — {{ d.schoolHours || 7 }}h</span>
+                      <div v-if="d.isSchoolDay" class="flex items-center gap-2 text-sm text-blue-700">
+                        <span class="inline-flex items-center gap-1.5 font-medium"><GraduationCap class="h-4 w-4" /> Cours</span>
+                        <span class="text-xs font-medium text-blue-600/70">- {{ d.schoolHours || 7 }}h</span>
                       </div>
                       <div v-else class="space-y-1">
                         <div v-for="s in d.services" :key="s.service + s.startTime" class="text-sm text-gray-700">
-                          <span class="mr-1">{{ serviceIcon(s.service) }}</span>
+                          <component :is="serviceIcon(s.service)" class="mr-1 inline h-4 w-4 text-orange-500" />
                           <span class="font-mono">{{ s.startTime }}–{{ s.endTime }}</span>
                           <span v-if="s.breakMinutesUsed > 0" class="text-xs text-gray-500"> • pause {{ s.breakMinutesUsed }} min</span>
                         </div>
@@ -214,15 +234,11 @@
                     <td class="p-4 text-right font-semibold text-gray-900">{{ formatMinutes(d.minutes) }}</td>
                     <td class="p-4">
                       <div class="flex items-center justify-center gap-2">
-                        <button @click="openEditModal(d)" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                          <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                          </svg>
+                        <button @click="openEditModal(d)" class="p-2 hover:bg-gray-100 rounded-lg transition-colors" aria-label="Modifier">
+                          <Pencil class="h-4 w-4 text-gray-600" />
                         </button>
-                        <button @click="deleteEntry(d.date)" class="p-2 hover:bg-red-50 rounded-lg transition-colors">
-                          <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                          </svg>
+                        <button @click="deleteEntry(d.date)" class="p-2 hover:bg-red-50 rounded-lg transition-colors" aria-label="Supprimer">
+                          <Trash2 class="h-4 w-4 text-red-600" />
                         </button>
                       </div>
                     </td>
@@ -239,29 +255,30 @@
                   <div class="font-semibold text-gray-900">{{ formatMinutes(d.minutes) }}</div>
                 </div>
                 
-                <div v-if="d.isSchoolDay" class="mb-2 text-sm text-blue-700">
-                  <span class="font-medium">📚 Cours</span>
-                  <span class="text-xs text-blue-600/70"> — {{ d.schoolHours || 7 }}h</span>
+                <div v-if="d.isSchoolDay" class="mb-2 flex items-center gap-2 text-sm text-blue-700">
+                  <span class="inline-flex items-center gap-1.5 font-medium"><GraduationCap class="h-4 w-4" /> Cours</span>
+                  <span class="text-xs font-medium text-blue-600/70">- {{ d.schoolHours || 7 }}h</span>
                 </div>
                 
                 <div v-else class="mb-2 space-y-1">
                   <div v-for="s in d.services" :key="s.service + s.startTime" class="text-sm text-gray-700">
-                    <span class="mr-1">{{ serviceIcon(s.service) }}</span>
+                    <component :is="serviceIcon(s.service)" class="mr-1 inline h-4 w-4 text-orange-500" />
                     <span class="font-mono">{{ s.startTime }}–{{ s.endTime }}</span>
                     <span v-if="s.breakMinutesUsed > 0" class="text-xs text-gray-500"> • pause {{ s.breakMinutesUsed }} min</span>
                   </div>
                 </div>
                 
                 <div class="flex items-center justify-end gap-2 pt-3 border-t border-gray-200">
-                  <button @click="openEditModal(d)" class="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors text-sm font-medium">Modifier</button>
-                  <button @click="deleteEntry(d.date)" class="px-3 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-colors text-sm font-medium">Supprimer</button>
+                  <button @click="openEditModal(d)" class="inline-flex items-center gap-2 rounded-lg bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200"><Pencil class="h-4 w-4" />Modifier</button>
+                  <button @click="deleteEntry(d.date)" class="inline-flex items-center gap-2 rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-100"><Trash2 class="h-4 w-4" />Supprimer</button>
                 </div>
               </div>
             </div>
           </div>
 
           <div class="pt-4">
-            <button @click="exportCsv" class="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-900 font-medium rounded-xl transition-all duration-200">
+            <button @click="exportCsv" class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-gray-100 py-3 font-medium text-gray-950 transition hover:bg-gray-200">
+              <Download class="h-4 w-4" />
               Exporter CSV
             </button>
           </div>
@@ -289,6 +306,24 @@ import dayjs from 'dayjs';
 import isoWeek from 'dayjs/plugin/isoWeek';
 import 'dayjs/locale/fr';
 import EditEntryModal from './EditEntryModal.vue';
+import {
+  CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+  Clock3,
+  Download,
+  GraduationCap,
+  List,
+  LogOut,
+  Moon,
+  Pencil,
+  Plus,
+  Settings as SettingsIcon,
+  Sun,
+  Trash2,
+  TriangleAlert,
+  CalendarDays,
+} from '@lucide/vue';
 dayjs.extend(isoWeek);
 dayjs.locale('fr');
 
@@ -340,15 +375,15 @@ const periodLabel = computed(() => {
 });
 
 function labelService(s) {
-  if (s === 'morning') return '🌅 Matin';
-  if (s === 'evening') return '🌙 Soir';
-  return '📅 Service';
+  if (s === 'morning') return 'Matin';
+  if (s === 'evening') return 'Soir';
+  return 'Service';
 }
 
 function serviceIcon(s) {
-  if (s === 'morning') return '🌅';
-  if (s === 'evening') return '🌙';
-  return '📅';
+  if (s === 'morning') return Sun;
+  if (s === 'evening') return Moon;
+  return CalendarDays;
 }
 
 function formatDate(d) {
@@ -594,4 +629,3 @@ onMounted(() => {
   backdrop-filter: blur(20px);
 }
 </style>
-

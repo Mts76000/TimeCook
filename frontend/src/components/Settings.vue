@@ -1,24 +1,28 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <header class="bg-white/95 backdrop-blur-xl shadow-sm sticky top-0 z-10 border-b border-gray-200">
-      <div class="max-w-4xl mx-auto px-4 sm:px-6 py-5 flex items-center justify-between">
+  <div class="min-h-screen bg-[#fff8f1]">
+    <header class="sticky top-0 z-10 border-b border-orange-100/80 bg-white/90 backdrop-blur-xl">
+      <div class="mx-auto flex max-w-4xl items-center justify-between px-4 py-4 sm:px-6">
         <div class="flex items-center gap-3">
-          <button @click="$emit('back')" class="p-2 hover:bg-gray-100 rounded-full transition-colors">
-            <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-            </svg>
+          <button @click="$emit('back')" class="grid h-10 w-10 place-items-center rounded-lg border border-gray-200 bg-white text-gray-700 transition hover:bg-gray-50" aria-label="Retour">
+            <ChevronLeft class="h-5 w-5" />
           </button>
-          <h1 class="text-2xl font-semibold text-gray-900">Paramètres</h1>
+          <div>
+            <p class="text-sm font-semibold uppercase tracking-wide text-orange-600">Compte</p>
+            <h1 class="text-2xl font-semibold text-gray-950">Paramètres</h1>
+          </div>
         </div>
       </div>
     </header>
 
-    <main class="max-w-4xl mx-auto px-4 sm:px-6 py-8">
-      <!-- Objectifs Section -->
-      <section class="bg-white rounded-2xl p-8 shadow-sm border border-gray-200">
-        <h2 class="text-xl font-semibold mb-6 text-gray-900">
-          Objectifs personnalisables
-        </h2>
+    <main class="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+      <section class="rounded-xl border border-orange-100 bg-white p-5 shadow-sm sm:p-8">
+        <div class="mb-6 flex items-start justify-between gap-4">
+          <div>
+            <h2 class="text-xl font-semibold text-gray-950">Objectifs personnalisables</h2>
+            <p class="mt-2 text-sm leading-6 text-gray-600">Ces valeurs servent au résumé hebdomadaire et mensuel.</p>
+          </div>
+          <Target class="h-5 w-5 text-orange-500" />
+        </div>
         
         <form @submit.prevent="saveObjectives" class="space-y-5">
           <div>
@@ -51,19 +55,22 @@
 
           <button 
             type="submit" 
-            class="w-full py-3.5 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-xl transition-all duration-200 shadow-sm"
+            class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-orange-500 py-3.5 font-semibold text-white shadow-sm shadow-orange-500/20 transition hover:bg-orange-600"
           >
+            <Save class="h-4 w-4" />
             Sauvegarder les objectifs
           </button>
 
           <Transition name="success">
-            <p v-if="objectivesSuccess" class="text-green-600 text-sm bg-green-50 p-4 rounded-xl font-medium">
-              ✓ Objectifs sauvegardés avec succès !
+            <p v-if="objectivesSuccess" class="flex items-start gap-2 rounded-lg bg-green-50 p-4 text-sm font-medium text-green-700">
+              <CheckCircle2 class="mt-0.5 h-4 w-4 shrink-0" />
+              Objectifs sauvegardés avec succès.
             </p>
           </Transition>
           
-          <p v-if="objectivesError" class="text-red-600 text-sm bg-red-50 p-4 rounded-xl font-medium">
-            ❌ {{ objectivesError }}
+          <p v-if="objectivesError" class="flex items-start gap-2 rounded-lg bg-red-50 p-4 text-sm font-medium text-red-700">
+            <TriangleAlert class="mt-0.5 h-4 w-4 shrink-0" />
+            {{ objectivesError }}
           </p>
         </form>
       </section>
@@ -74,6 +81,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { api } from '../api';
+import { CheckCircle2, ChevronLeft, Save, Target, TriangleAlert } from '@lucide/vue';
 
 const emit = defineEmits(['back']);
 
