@@ -1,6 +1,6 @@
 # TimeCook API
 
-API Express pour TimeCook : authentification, suivi d’heures, objectifs et export CSV.
+API Express pour TimeCook : authentification, suivi d’heures, objectifs, partage et export CSV.
 
 ## Lancer en local
 
@@ -26,19 +26,34 @@ npm run seed-demo
 
 ## Endpoints principaux
 
+### Authentification
+
 - `POST /auth/register` — créer un compte
 - `POST /auth/login` — se connecter
 - `GET /auth/me` — profil connecté
-- `PATCH /auth/me` — mettre à jour les objectifs
+- `PATCH /auth/me` — mettre à jour le nom, les objectifs et la pause par défaut
 - `PATCH /auth/me/password` — changer le mot de passe
 - `DELETE /auth/me` — supprimer le compte
 - `POST /auth/forgot-password` — demande de réinitialisation
 - `POST /auth/reset-password` — réinitialiser le mot de passe
+
+### Partage
+
+- `POST /auth/share` — générer un lien de partage public
+- `GET /auth/share/:token` — consulter les données partagées en lecture seule
+
+### Entrées
+
 - `POST /entries` — ajouter une entrée
 - `GET /entries` — liste des entrées
 - `GET /entries/summary` — résumé semaine/mois
+- `DELETE /entries/:id` — supprimer une entrée
+- `PUT /entries/:id` — modifier une entrée
 - `GET /export` — export CSV
-- `GET /settings` / `PATCH /settings` — paramètres utilisateur
+
+### Paramètres
+
+- `GET /settings` / `PATCH /settings` — paramètres utilisateur (objectifs, pause par défaut)
 
 ## Configuration
 

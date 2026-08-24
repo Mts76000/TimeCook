@@ -18,3 +18,8 @@ npm run build
 ```
 
 Le build statique est généré dans le dossier `dist/`.
+
+## PWA
+
+Un manifest, des icônes et un service worker basique sont présents dans `public/`.
+Le service worker met en cache les ressources statiques pour un fonctionnement offline limité.
