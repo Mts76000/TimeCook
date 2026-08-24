@@ -1,42 +1,45 @@
-# TimeCook API (Express + JWT + MongoDB)
+# TimeCook API
 
-Simple API d'authentification et de suivi d'heures pour alternance/restauration.
-
-## Endpoints
-
-- POST /auth/register { email, password, name? }
-- POST /auth/login { email, password }
-- GET /auth/me (Bearer token)
-- POST /entries { date: YYYY-MM-DD, isSchoolDay: bool, service: 'morning'|'evening'|'full', startTime: 'HH:mm', endTime: 'HH:mm', notes? }
-- GET /entries?start=YYYY-MM-DD&end=YYYY-MM-DD
-- GET /entries/summary?range=week|month&start=YYYY-MM-DD
-- GET /export?start=YYYY-MM-DD&end=YYYY-MM-DD -> CSV
-
-Règles:
-
-- 45 minutes de pause déduites par service saisi (si pas jour de cours)
-- Jour de cours compte 7h dans le total hebdo (35h)
-
-## Configuration
-
-Copiez `.env.example` en `.env` et remplissez:
-
-```
-PORT=4000
-MONGODB_URI=...
-JWT_SECRET=...
-```
+API Express pour TimeCook : authentification, suivi d’heures, objectifs et export CSV.
 
 ## Lancer en local
 
-```
+```bash
+cp .env.example .env
+# Remplissez MONGODB_URI, JWT_SECRET, RESEND_API_KEY, FROM_EMAIL et APP_URL
 npm install
 npm run dev
 ```
 
-## Déploiement (Coolify)
+Le serveur écoute sur `http://localhost:4000` (par défaut).
 
-- Image Node 20+
-- Commande: `npm ci && npm run start`
-- Variables d'env comme dans `.env`
-- Expose le port `PORT`
+## Données de démo
+
+Créer un compte et des entrées fictives pour les démonstrations :
+
+```bash
+npm run seed-demo
+```
+
+- Email : `demo@timecook.app`
+- Mot de passe : `demo1234`
+
+## Endpoints principaux
+
+- `POST /auth/register` — créer un compte
+- `POST /auth/login` — se connecter
+- `GET /auth/me` — profil connecté
+- `PATCH /auth/me` — mettre à jour les objectifs
+- `PATCH /auth/me/password` — changer le mot de passe
+- `DELETE /auth/me` — supprimer le compte
+- `POST /auth/forgot-password` — demande de réinitialisation
+- `POST /auth/reset-password` — réinitialiser le mot de passe
+- `POST /entries` — ajouter une entrée
+- `GET /entries` — liste des entrées
+- `GET /entries/summary` — résumé semaine/mois
+- `GET /export` — export CSV
+- `GET /settings` / `PATCH /settings` — paramètres utilisateur
+
+## Configuration
+
+Voir `.env.example` pour les variables d’environnement requises.

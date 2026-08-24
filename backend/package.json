@@ -9,9 +9,11 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
+    "seed-demo": "node src/seed-demo.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@faker-js/faker": "^10.6.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dayjs": "^1.11.13",
@@ -19,7 +21,8 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.8.0",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "resend": "^6.22.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.7"
