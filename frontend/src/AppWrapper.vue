@@ -3,7 +3,7 @@
     <Transition name="fade" mode="out-in">
       <LandingPage v-if="showLanding && !user" @go-to-auth="showLanding = false" key="landing" />
       <AuthForm v-else-if="!user && !showSettings" @authed="onAuthed" @back-to-landing="showLanding = true" key="auth" />
-      <Settings v-else-if="showSettings" @back="showSettings = false" key="settings" />
+      <Settings v-else-if="showSettings" @back="showSettings = false" @logout="logout" key="settings" />
       <Dashboard v-else :user="user" @logout="logout" @settings="showSettings = true" key="dashboard" />
     </Transition>
   </div>

@@ -1,9 +1,10 @@
 <template>
   <router-view />
+  <ToastContainer />
 </template>
 
 <script setup>
-// Router will handle the views
+import ToastContainer from './components/ToastContainer.vue';
 </script>
 
 <style>
@@ -23,7 +24,3 @@
   transform: translateX(-20px);
 }
 </style>
-
-
-
-
