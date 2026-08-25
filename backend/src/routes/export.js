@@ -4,16 +4,20 @@ const TimeEntry = require("../models/TimeEntry");
 const User = require("../models/User");
 const { minutesToHm, netServiceMinutes } = require("../utils/summary");
 
+const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
+
+function isValidDate(d) {
+  return typeof d === "string" && DATE_REGEX.test(d);
+}
+
 router.use(auth);
 
 // CSV export for a period
 router.get("/", async (req, res) => {
   try {
     const { start, end } = req.query;
-    if (!start || !end)
-      return res
-        .status(400)
-        .json({ error: "start and end (YYYY-MM-DD) required" });
+    if (!isValidDate(start) || !isValidDate(end))
+      return res.status(400).json({ error: "start and end (YYYY-MM-DD) required" });
 
     const user = await User.findById(req.user.id);
     const defaultBreakMinutes = user?.defaultBreakMinutes || 45;

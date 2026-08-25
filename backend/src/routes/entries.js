@@ -5,9 +5,26 @@ const TimeEntry = require("../models/TimeEntry");
 const User = require("../models/User");
 const { summarize } = require("../utils/summary");
 
+const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
+const TIME_REGEX = /^([01]\d|2[0-3]):([0-5]\d)$/;
+
+function isValidDate(d) {
+  return typeof d === "string" && DATE_REGEX.test(d) && dayjs(d).isValid();
+}
+
+function isValidTime(t) {
+  return typeof t === "string" && TIME_REGEX.test(t);
+}
+
+function clampNumber(value, min, max) {
+  const num = Number(value);
+  if (!Number.isFinite(num)) return undefined;
+  return Math.max(min, Math.min(max, num));
+}
+
 router.use(auth);
 
-// Create or update an entry
+// Create an entry
 router.post("/", async (req, res) => {
   try {
     const {
@@ -19,24 +36,33 @@ router.post("/", async (req, res) => {
       breakMinutes,
       schoolHours,
     } = req.body || {};
-    if (!date)
-      return res.status(400).json({ error: "date required (YYYY-MM-DD)" });
-    if (!isSchoolDay && (!startTime || !endTime)) {
-      return res
-        .status(400)
-        .json({ error: "startTime and endTime required for a service" });
-    }
 
-    const doc = new TimeEntry({
+    if (!isValidDate(date))
+      return res.status(400).json({ error: "date required (YYYY-MM-DD)" });
+
+    const payload = {
       userId: req.user.id,
       date,
-      service: isSchoolDay ? undefined : service || "full",
-      startTime: isSchoolDay ? undefined : startTime,
-      endTime: isSchoolDay ? undefined : endTime,
-      isSchoolDay,
-      breakMinutes: isSchoolDay ? undefined : breakMinutes,
-      schoolHours: isSchoolDay ? schoolHours : undefined,
-    });
+      isSchoolDay: Boolean(isSchoolDay),
+    };
+
+    if (payload.isSchoolDay) {
+      const v = clampNumber(schoolHours, 0, 24);
+      payload.schoolHours = v !== undefined ? v : 7;
+    } else {
+      if (!isValidTime(startTime) || !isValidTime(endTime))
+        return res.status(400).json({ error: "startTime and endTime required (HH:MM)" });
+
+      const validService = ["morning", "evening", "full"].includes(service) ? service : "full";
+      const v = clampNumber(breakMinutes, 0, 300);
+
+      payload.service = validService;
+      payload.startTime = startTime;
+      payload.endTime = endTime;
+      payload.breakMinutes = v !== undefined ? v : 45;
+    }
+
+    const doc = new TimeEntry(payload);
     await doc.save();
     res.status(201).json(doc);
   } catch (e) {
@@ -51,8 +77,8 @@ router.get("/", async (req, res) => {
     const { start, end } = req.query;
     const q = { userId: req.user.id };
     if (start || end) {
-      const s = start || "1900-01-01";
-      const e = end || "2999-12-31";
+      const s = start && isValidDate(start) ? start : "1900-01-01";
+      const e = end && isValidDate(end) ? end : "2999-12-31";
       q.date = { $gte: s, $lte: e };
     }
     const items = await TimeEntry.find(q).sort({ date: 1, createdAt: 1 });
@@ -67,7 +93,10 @@ router.get("/", async (req, res) => {
 router.get("/summary", async (req, res) => {
   try {
     const { range = "week", start } = req.query;
-    const ref = start ? dayjs(start) : dayjs();
+    if (!["week", "month"].includes(range))
+      return res.status(400).json({ error: "range must be week or month" });
+
+    const ref = start && isValidDate(start) ? dayjs(start) : dayjs();
     let periodStart, periodEnd;
     if (range === "month") {
       periodStart = ref.startOf("month").format("YYYY-MM-DD");
@@ -132,21 +161,29 @@ router.put("/:id", async (req, res) => {
 
     if (!doc) return res.status(404).json({ error: "Not found" });
 
-    if (date) doc.date = date;
-    doc.isSchoolDay = isSchoolDay;
+    if (date && isValidDate(date)) doc.date = date;
+    doc.isSchoolDay = Boolean(isSchoolDay);
 
-    if (isSchoolDay) {
-      doc.schoolHours = schoolHours;
+    if (doc.isSchoolDay) {
+      const v = clampNumber(schoolHours, 0, 24);
+      doc.schoolHours = v !== undefined ? v : 7;
       doc.service = undefined;
       doc.startTime = undefined;
       doc.endTime = undefined;
       doc.breakMinutes = undefined;
     } else {
-      doc.service = service || doc.service;
+      if (startTime && !isValidTime(startTime))
+        return res.status(400).json({ error: "startTime must be HH:MM" });
+      if (endTime && !isValidTime(endTime))
+        return res.status(400).json({ error: "endTime must be HH:MM" });
+
+      const validService = ["morning", "evening", "full"].includes(service) ? service : doc.service;
+      const v = clampNumber(breakMinutes, 0, 300);
+
+      doc.service = service ? validService : doc.service;
       doc.startTime = startTime || doc.startTime;
       doc.endTime = endTime || doc.endTime;
-      doc.breakMinutes =
-        breakMinutes !== undefined ? breakMinutes : doc.breakMinutes;
+      doc.breakMinutes = v !== undefined ? v : doc.breakMinutes;
       doc.schoolHours = undefined;
     }
 

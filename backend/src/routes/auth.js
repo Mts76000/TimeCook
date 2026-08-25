@@ -9,6 +9,21 @@ const { jwtSecret, resendApiKey, fromEmail, appUrl } = require("../config");
 
 const resend = resendApiKey ? new Resend(resendApiKey) : null;
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function isValidEmail(email) {
+  return typeof email === "string" && email.length <= 254 && EMAIL_REGEX.test(email);
+}
+
+function isValidPassword(password) {
+  return typeof password === "string" && password.length >= 6 && password.length <= 128;
+}
+
+function sanitizeName(name) {
+  if (!name) return "";
+  return String(name).trim().slice(0, 100);
+}
+
 function signToken(user) {
   return jwt.sign({ email: user.email, name: user.name || "" }, jwtSecret, {
     subject: String(user._id),
@@ -26,11 +41,17 @@ router.post("/register", async (req, res) => {
     if (!email || !password)
       return res.status(400).json({ error: "Email and password required" });
 
-    const existing = await User.findOne({ email });
+    const cleanEmail = String(email).toLowerCase().trim();
+    if (!isValidEmail(cleanEmail))
+      return res.status(400).json({ error: "Invalid email" });
+    if (!isValidPassword(password))
+      return res.status(400).json({ error: "Password must be between 6 and 128 characters" });
+
+    const existing = await User.findOne({ email: cleanEmail });
     if (existing)
       return res.status(409).json({ error: "Email already registered" });
 
-    const user = new User({ email, name });
+    const user = new User({ email: cleanEmail, name: sanitizeName(name) });
     await user.setPassword(password);
     await user.save();
 
@@ -45,9 +66,16 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body || {};
-    const user = await User.findOne({ email });
+    if (!email || !password)
+      return res.status(400).json({ error: "Email and password required" });
+
+    const cleanEmail = String(email).toLowerCase().trim();
+    if (!isValidEmail(cleanEmail))
+      return res.status(400).json({ error: "Invalid email" });
+
+    const user = await User.findOne({ email: cleanEmail });
     if (!user) return res.status(401).json({ error: "Invalid credentials" });
-    const ok = await user.validatePassword(password || "");
+    const ok = await user.validatePassword(password);
     if (!ok) return res.status(401).json({ error: "Invalid credentials" });
 
     const token = signToken(user);
@@ -64,15 +92,31 @@ router.get("/me", auth, async (req, res) => {
   res.json({ user: user.toJSON() });
 });
 
+function clampNumber(value, min, max) {
+  const num = Number(value);
+  if (!Number.isFinite(num)) return undefined;
+  return Math.max(min, Math.min(max, num));
+}
+
 router.patch("/me", auth, async (req, res) => {
   try {
     const { weeklyTargetHours, monthlyTargetHours, defaultBreakMinutes, name } = req.body || {};
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ error: "Not found" });
-    if (name !== undefined) user.name = name;
-    if (weeklyTargetHours !== undefined) user.weeklyTargetHours = weeklyTargetHours;
-    if (monthlyTargetHours !== undefined) user.monthlyTargetHours = monthlyTargetHours;
-    if (defaultBreakMinutes !== undefined) user.defaultBreakMinutes = defaultBreakMinutes;
+
+    if (name !== undefined) user.name = sanitizeName(name);
+    if (weeklyTargetHours !== undefined) {
+      const v = clampNumber(weeklyTargetHours, 1, 168);
+      if (v !== undefined) user.weeklyTargetHours = v;
+    }
+    if (monthlyTargetHours !== undefined) {
+      const v = clampNumber(monthlyTargetHours, 1, 744);
+      if (v !== undefined) user.monthlyTargetHours = v;
+    }
+    if (defaultBreakMinutes !== undefined) {
+      const v = clampNumber(defaultBreakMinutes, 0, 300);
+      if (v !== undefined) user.defaultBreakMinutes = v;
+    }
     await user.save();
     res.json({ user: user.toJSON() });
   } catch (e) {
@@ -86,6 +130,9 @@ router.patch("/me/password", auth, async (req, res) => {
     const { currentPassword, newPassword } = req.body || {};
     if (!currentPassword || !newPassword)
       return res.status(400).json({ error: "Current and new password required" });
+
+    if (!isValidPassword(newPassword))
+      return res.status(400).json({ error: "New password must be between 6 and 128 characters" });
 
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ error: "Not found" });
@@ -119,7 +166,11 @@ router.post("/forgot-password", async (req, res) => {
     const { email } = req.body || {};
     if (!email) return res.status(400).json({ error: "Email required" });
 
-    const user = await User.findOne({ email: email.toLowerCase() });
+    const cleanEmail = String(email).toLowerCase().trim();
+    if (!isValidEmail(cleanEmail))
+      return res.status(400).json({ error: "Invalid email" });
+
+    const user = await User.findOne({ email: cleanEmail });
     if (!user) {
       // Répondre OK pour ne pas révéler l'existence du compte
       return res.json({ ok: true });
@@ -245,6 +296,9 @@ router.post("/reset-password", async (req, res) => {
     const { token, newPassword } = req.body || {};
     if (!token || !newPassword)
       return res.status(400).json({ error: "Token and new password required" });
+
+    if (!isValidPassword(newPassword))
+      return res.status(400).json({ error: "Password must be between 6 and 128 characters" });
 
     let payload;
     try {
