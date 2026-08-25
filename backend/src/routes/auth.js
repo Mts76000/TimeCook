@@ -137,11 +137,58 @@ router.post("/forgot-password", async (req, res) => {
           to: user.email,
           subject: "Réinitialisation de votre mot de passe TimeCook",
           html: `
-            <p>Bonjour,</p>
-            <p>Vous avez demandé à réinitialiser votre mot de passe TimeCook.</p>
-            <p><a href="${resetLink}">Réinitialiser mon mot de passe</a></p>
-            <p>Ce lien est valable 1 heure.</p>
-            <p>Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.</p>
+            <!DOCTYPE html>
+            <html lang="fr">
+            <head>
+              <meta charset="UTF-8" />
+              <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+              <title>Réinitialisation TimeCook</title>
+            </head>
+            <body style="margin:0;padding:0;background-color:#FAF9F7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FAF9F7;padding:40px 0;">
+                <tr>
+                  <td align="center">
+                    <table width="520" cellpadding="0" cellspacing="0" border="0" style="background-color:#FFFFFF;border:1px solid #E2E0DC;border-radius:16px;overflow:hidden;max-width:90%;">
+                      <tr>
+                        <td style="padding:40px 40px 32px;text-align:center;">
+                          <h1 style="margin:0 0 8px;font-size:28px;font-weight:700;color:#1C1917;letter-spacing:-0.5px;">TimeCook</h1>
+                          <p style="margin:0;font-size:14px;color:#8C8580;">Suivi d’heures pour alternants en restauration</p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:0 40px 32px;">
+                          <p style="margin:0 0 16px;font-size:18px;font-weight:600;color:#1C1917;">Bonjour,</p>
+                          <p style="margin:0 0 24px;font-size:15px;line-height:1.6;color:#5C5752;">
+                            Vous avez demandé à réinitialiser le mot de passe de votre compte TimeCook. Cliquez sur le bouton ci-dessous pour créer un nouveau mot de passe.
+                          </p>
+                          <p style="margin:0 0 24px;text-align:center;">
+                            <a href="${resetLink}" style="display:inline-block;background-color:#F97316;color:#FFFFFF;text-decoration:none;padding:14px 28px;border-radius:10px;font-size:15px;font-weight:600;">Réinitialiser mon mot de passe</a>
+                          </p>
+                          <p style="margin:0 0 8px;font-size:13px;color:#8C8580;text-align:center;">
+                            Ce lien est valable pendant <strong style="color:#1C1917;">1 heure</strong>.
+                          </p>
+                          <p style="margin:0;font-size:13px;color:#8C8580;text-align:center;">
+                            Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :
+                          </p>
+                          <p style="margin:8px 0 0;text-align:center;word-break:break-all;">
+                            <a href="${resetLink}" style="font-size:13px;color:#F97316;text-decoration:underline;">${resetLink}</a>
+                          </p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:24px 40px;background-color:#FAF9F7;border-top:1px solid #E2E0DC;">
+                          <p style="margin:0;font-size:13px;color:#8C8580;text-align:center;">
+                            Si vous n’êtes pas à l’origine de cette demande, ignorez simplement cet email. Votre mot de passe ne sera pas modifié.
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+                    <p style="margin-top:24px;font-size:12px;color:#8C8580;">© TimeCook — contact@mathis-lamotte.fr</p>
+                  </td>
+                </tr>
+              </table>
+            </body>
+            </html>
           `,
         });
       } catch (err) {
