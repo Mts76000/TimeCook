@@ -7,9 +7,9 @@ import router from "./router";
 
 dayjs.locale("fr");
 
-// Umami analytics (production only)
+// Umami analytics (enabled when VITE_UMAMI_WEBSITE_ID is set at build time)
 const umamiWebsiteId = import.meta.env.VITE_UMAMI_WEBSITE_ID;
-if (import.meta.env.PROD && umamiWebsiteId) {
+if (umamiWebsiteId) {
   const script = document.createElement("script");
   script.defer = true;
   script.src = "https://stats.mathis-lamotte.fr/script.js";
