@@ -7,6 +7,16 @@ import router from "./router";
 
 dayjs.locale("fr");
 
+// Umami analytics (production only)
+const umamiWebsiteId = import.meta.env.VITE_UMAMI_WEBSITE_ID;
+if (import.meta.env.PROD && umamiWebsiteId) {
+  const script = document.createElement("script");
+  script.defer = true;
+  script.src = "https://stats.mathis-lamotte.fr/script.js";
+  script.dataset.websiteId = umamiWebsiteId;
+  document.head.appendChild(script);
+}
+
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker
     .register("/service-worker.js")
