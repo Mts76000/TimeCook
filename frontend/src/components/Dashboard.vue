@@ -377,7 +377,11 @@ async function deleteEntry(date) {
 }
 
 async function exportCsv() {
-  const { data } = await api.get('/entries/summary', { params: { range: range.value, start: start.value } });
+  let periodStart = start.value;
+  if (range.value === 'week') {
+    periodStart = dayjs(start.value).isoWeekday(1).format('YYYY-MM-DD');
+  }
+  const { data } = await api.get('/entries/summary', { params: { range: range.value, start: periodStart } });
   const s = data.start, e = data.end;
   const resp = await api.get('/export', { params: { start: s, end: e }, responseType: 'blob' });
   const blob = new Blob([resp.data], { type: 'text/csv;charset=utf-8;' });
